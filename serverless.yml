@@ -1,0 +1,42 @@
+org: mikaeldramatic
+service: shakespear-insult-api
+
+provider:
+  name: aws
+  runtime: nodejs24.x
+  architecture: arm64
+  region: eu-north-1
+  iam:
+    role: ${file(./config.yml):role}
+
+functions:
+  getInsults:
+    handler: functions/getInsults/getInsults.handler
+    events:
+      - httpApi:
+          path: /insults
+          method: get
+  getInsult:
+    handler: functions/getInsult/index.handler
+    events:
+      - httpApi:
+          path: /insults/{id}
+          method: get
+  createInsult:
+    handler: functions/createInsult/index.handler
+    events:
+      - httpApi:
+          path: /insults
+          method: post
+  updateInsult:
+    handler: functions/updateInsult/index.handler
+    events:
+      - httpApi:
+          path: /insults/{id}
+          method: put
+  deleteInsult:
+    handler: functions/deleteInsult/index.handler
+    events:
+      - httpApi:
+          path: /insults/{id}
+          method: delete
