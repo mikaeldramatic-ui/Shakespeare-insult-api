@@ -2,17 +2,27 @@ import insults from '../../data/insults.mjs';
 import { sendResponse } from '../../responses/index.mjs';
 
 export const handler = async (event) => {
-    const body = JSON.parse(event.body);
+ let body;
 
-    const newId = Math.max(...insults.map((item) => item.id)) + 1;
+ try {
+    body = JSON.parse(event.body);
+ } catch (error) {
+    return sendResponse(400, {message: 'Invalid JSON in request body.' });
+ }
 
-    const newInsult = {
-        id: newId,
-        insult: body.insult,
-        play: body.play
-    };
+ if (!body || !body.insult || !body.play) {
+    return sendResponse(400,{message: 'Insult and play are required.' });
+ }
 
-    insults.push(newInsult);
+ const newId = Math.max(...insults.map((item) => item.id)) + 1;
 
-    return sendResponse(201, newInsult);
+ const newInsult = {
+    id: newId,
+    insult: body.insult,
+    play: body.play
+ };
+
+ insults.push(newInsult);
+
+ return sendResponse(201, newInsult);
 };
